@@ -1,0 +1,222 @@
+//NMEC:89285
+
+//1. Liste todos os documentos da coleção
+db.restaurants.find({})
+
+//2. Apresente os campos restaurant_id, nome, localidade e gastronomia para todos os documentos da coleção
+db.restaurants.find({}, {restaurant_id:1, nome:1, localidade:1, gastronomia:1 })
+
+//3.Apresente os campos restaurant_id, nome, localidade e código postal (zipcode), mas exclua o campo _id de todos os documentos da coleção
+db.restaurants.find({}, {restaurant_id:1, nome:1, localidade:1, address:{zipcode:1}, _id:0 })
+
+//4.Indique o total de restaurantes localizados no Bronx
+db.restaurants.countDocuments({localidade:"Bronx"})
+
+//5.Apresente os primeiros 15 restaurantes localizados no Bronx, ordenados por ordem crescente de nome.
+db.restaurants.aggregate([{$match:{localidade:"Bronx"}}, {$sort: {nome:1}}, {$limit:15}])
+
+//6.Liste todos os restaurantes que tenham pelo menos um score superior a 85
+db.restaurants.find({grades: {$elemMatch: {score:{$gt:85}} }})
+
+//7.Encontre os restaurantes que obtiveram uma ou mais pontuações (score) entre
+[80 e 100].
+db.restaurants.find({grades: {$elemMatch: {score:{$gt:85, $lt:100}} }})
+
+//8.Indique os restaurantes com latitude inferior a -95,7
+db.restaurants.find({ 'address.coord.0': {$lt:-97.5}})
+
+//9.Indique os restaurantes que não têm gastronomia "American", tiveram uma (ou mais) pontuação superior a 70 e estão numa latitude inferior a -65.
+db.restaurants.find({gastronomia:{$ne: "American"}, grades: {$elemMatch: {score: {$gt:75}}}, 'address.coord.0':{$lt:-65} })
+
+//10.Liste o restaurant_id, o nome, a localidade e gastronomia dos restaurantes cujo nome começam por "Wil".
+db.restaurants.find({nome:/^Wil/}, {restaurant_id:1, nome:1, localidade:1, gastronomia:1, _id:0})
+
+//11.Liste o nome, a localidade e a gastronomia dos restaurantes que pertencem ao Bronx e cuja gastronomia é do tipo "American" ou "Chinese".
+db.restaurants.find({gastronomia: {$in: ["American", "Chinese"]}}, { nome:1, localidade:1, gastronomia:1, _id:0})
+
+//12.Liste o restaurant_id, o nome, a localidade e a gastronomia dos restaurantes localizados em "Staten Island", "Queens", ou "Brooklyn"
+db.restaurants.find({localidade: {$in: ["Staten Island", "Queens", "Brooklyn"]}}, { restaurant_id:1 ,nome:1, localidade:1, gastronomia:1, _id:0})
+
+//13. Liste o nome, a localidade, o score e gastronomia dos restaurantes que alcançaram sempre pontuações inferiores ou igual a 3.
+db.restaurants.find({"grades.score": {$not: {$gt: 3}}}, {nome:1, localidade:1,gastronomia:1, score:"$grades.score" })
+
+//14.Liste o nome e as avaliações dos restaurantes que obtiveram uma avaliação com um grade "A", um score 10 na data "2014-08-11T00: 00: 00Z" (ISODATE)
+db.restaurants.find({"grades":{date:ISODate("2014-08-11T00:00:00Z"), grade:'A', score:10}},{nome:1, grades:1, _id:0})
+
+//15. Liste o restaurant_id, o nome e os score dos restaurantes nos quais a segunda avaliação foi grade "A" e ocorreu em ISODATE "2014-08-11T00: 00: 00Z"
+db.restaurants.find({"grades.1.grade": "A", "grades.1.date": ISODate("2014-08-11T00:00:00Z") },{restaurant_id:1, nome:1, score:"$grades.score", _id:0})
+
+//16. Liste o restaurant_id, o nome, o endereço (address) e as coordenadas geográficas (coord) dos restaurantes onde o 2o elemento da matriz de coordenadas tem um valor superior a 42 e inferior ou igual a 52.
+db.restaurants.find({"address.coord.1": {$gt : 42, $lte: 52}},{restaurant_id:1, nome:1, address:1, coord:1, _id:0})
+
+//17. Liste nome, gastronomia e localidade de todos os restaurantes ordenando por ordem crescente da gastronomia e, em segundo, por ordem decrescente de localidade.
+db.restaurants.find({}, {nome:1, gastronomia:1, localidade:1, _id:0}).sort({gastronomia:1, localidade:-1})
+
+//18. Liste nome, localidade, grade e gastronomia de todos os restaurantes localizados em Brooklyn que não incluem gastronomia "American" e obtiveram uma classificação (grade) "A". Deve apresentá-los por ordem decrescente de gastronomia.
+db.restaurants.find({gastronomia: {$ne:"American"}, "grades.grade":"A"}, {nome:1, localidade:1, grade:"$grades.grade", gastronomia:1, _id:0}).sort({gastronomia:-1})
+
+//19. Conte o total de restaurante existentes em cada localidade.
+db.restaurants.aggregate([{$group: { _id:"$localidade", soma: {$sum:1}}}])
+
+//20.Liste todos os restaurantes cuja média dos score é superior a 30
+db.restaurants.aggregate([{$unwind:"$grades"}, {$group : {_id:"$nome", media_pontuacao: { $avg: "$grades.score"}}}, {$match: { media_pontuacao:{$gt:30}}} ])
+
+//21.Indique os restaurantes que têm gastronomia "Portuguese", o somatório de score é superior a 50 e estão numa latitude inferior a -60.
+db.restaurants.aggregate([{$addFields: {soma: {$sum: "$grades.score"}}}, {$match: {soma: {$gt: 50}, gastronomia: "Portuguese", "address.coord.0": {$lt: -60}}}])
+
+//22. Apresente o nome e o score dos 3 restaurantes com score médio mais elevado.
+db.restaurants.aggregate([{$addFields: {media_pontuacao: {$avg: "$grades.score"}}}, {$sort: {media_pontuacao:-1}}, {$limit: 3}])
+[
+  {
+    _id: ObjectId("62cd8e833732bed18eb48d16"),
+    address: {
+      building: '130',
+      coord: [ -73.984758, 40.7457939 ],
+      rua: 'Madison Avenue',
+      zipcode: '10016'
+    },
+    localidade: 'Manhattan',
+    gastronomia: 'Pizza/Italian',
+    grades: [
+      {
+        date: ISODate("2014-12-24T00:00:00.000Z"),
+        grade: 'Z',
+        score: 31
+      },
+      {
+        date: ISODate("2014-06-17T00:00:00.000Z"),
+        grade: 'C',
+        score: 98
+      },
+      {
+        date: ISODate("2013-12-12T00:00:00.000Z"),
+        grade: 'C',
+        score: 32
+      },
+      {
+        date: ISODate("2013-05-22T00:00:00.000Z"),
+        grade: 'B',
+        score: 21
+      },
+      {
+        date: ISODate("2012-05-02T00:00:00.000Z"),
+        grade: 'A',
+        score: 11
+      }
+    ],
+    nome: 'Bella Napoli',
+    restaurant_id: '40393488',
+    media_pontuacao: 38.6
+  },
+  {
+    _id: ObjectId("62cd8e833732bed18eb49582"),
+    address: {
+      building: '',
+      coord: [ -74.0163793, 40.7167671 ],
+      rua: 'Hudson River',
+      zipcode: '10282'
+    },
+    localidade: 'Manhattan',
+    gastronomia: 'American',
+    grades: [
+      {
+        date: ISODate("2014-06-27T00:00:00.000Z"),
+        grade: 'C',
+        score: 89
+      },
+      {
+        date: ISODate("2013-06-06T00:00:00.000Z"),
+        grade: 'A',
+        score: 6
+      },
+      {
+        date: ISODate("2012-06-19T00:00:00.000Z"),
+        grade: 'A',
+        score: 13
+      }
+    ],
+    nome: 'West 79Th Street Boat Basin Cafe',
+    restaurant_id: '40756344',
+    media_pontuacao: 36
+  },
+  {
+    _id: ObjectId("62cd8e833732bed18eb48b14"),
+    address: {
+      building: '65',
+      coord: [ -73.9782725, 40.7624022 ],
+      rua: 'West   54 Street',
+      zipcode: '10019'
+    },
+    localidade: 'Manhattan',
+    gastronomia: 'American',
+    grades: [
+      {
+        date: ISODate("2014-08-22T00:00:00.000Z"),
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: ISODate("2014-03-28T00:00:00.000Z"),
+        grade: 'C',
+        score: 131
+      },
+      {
+        date: ISODate("2013-09-25T00:00:00.000Z"),
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: ISODate("2013-04-08T00:00:00.000Z"),
+        grade: 'B',
+        score: 25
+      },
+      {
+        date: ISODate("2012-10-15T00:00:00.000Z"),
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: ISODate("2011-10-19T00:00:00.000Z"),
+        grade: 'A',
+        score: 13
+      }
+    ],
+    nome: "Murals On 54/Randolphs'S",
+    restaurant_id: '40372466',
+    media_pontuacao: 33.666666666666664
+  }
+]
+
+//23.Apresente o número de gastronomias diferentes na rua "Fifth Avenue"
+db.restaurants.aggregate([{$match: {"address.rua" : "Fifth Avenue"}}, {$count: "numero_restaurantes"}]
+[ { numero_restaurantes: 7 } ]
+
+//24.Conte quantos restaurantes existem por rua e ordene por ordem decrescente
+db.restaurants.aggregate([{$group: {_id: "$address.rua", numero_restaurants: {$sum: 1}}}, {$sort: {numero_restaurants: -1}}])
+[
+  { _id: 'Broadway', numero_restaurants: 178 },
+  { _id: '3 Avenue', numero_restaurants: 97 },
+  { _id: '7 Avenue', numero_restaurants: 71 },
+  { _id: '2 Avenue', numero_restaurants: 62 },
+  { _id: '5 Avenue', numero_restaurants: 52 },
+  { _id: 'Northern Boulevard', numero_restaurants: 49 },
+  { _id: '8 Avenue', numero_restaurants: 48 },
+  { _id: 'Lexington Avenue', numero_restaurants: 48 },
+  { _id: 'Amsterdam Avenue', numero_restaurants: 46 },
+  { _id: '1 Avenue', numero_restaurants: 44 },
+  { _id: '9 Avenue', numero_restaurants: 40 },
+  { _id: 'Madison Avenue', numero_restaurants: 38 },
+  { _id: 'Queens Boulevard', numero_restaurants: 35 },
+  { _id: 'Roosevelt Avenue', numero_restaurants: 34 },
+  { _id: 'Jamaica Avenue', numero_restaurants: 27 },
+  { _id: 'Columbus Avenue', numero_restaurants: 24 },
+  { _id: 'Third Avenue', numero_restaurants: 23 },
+  { _id: 'Nostrand Avenue', numero_restaurants: 22 },
+  { _id: 'Myrtle Avenue', numero_restaurants: 22 },
+  { _id: 'Court Street', numero_restaurants: 22 }
+]
+
+//25. Contar quanto restaurantes têm media de score superior a 10 na rua broadway
+ 
+
+

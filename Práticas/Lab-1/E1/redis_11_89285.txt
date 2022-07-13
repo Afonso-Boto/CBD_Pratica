@@ -1,0 +1,39 @@
+ping
+ping ola
+SET Worker:1
+SET Student:1 "Afonso"
+GET Student:1
+SET Student:1:Nmec 89285
+GET Student:1:Nmec
+INCR Student:1:Nmec
+GET Student:1:Nmec
+INCRBY Student:1:Nmec 10
+DECRBY Student:1:Nmec 10
+DECR Student:1:Nmec
+DECR Students:1:Nmec
+GET SAAAP:1
+MSET Student:2 "Ricardo" Student:3 "Joao"
+MGET Student
+MGET Student:1 Student:2 Student:3
+LPUSH Student:1:Hobby "surf"
+LRANGE Student:1:Hobby
+LRANGE Student:1:Hobby 0 -1
+LPUSH Student:1:Hobby "football"
+RPUSH Student:1:Hobby "skating"
+LRANGE Student:1:Hobby 0 -1
+RRANGE Student:1:Hobby 0 -1
+RANGE Student:1:Hobby 0 -1
+LPOP Student:1:Hobby
+RPOP Student:1:Hobby
+RANGE Student:1:Hobby 0 -1
+LRANGE Student:1:Hobby 0 -1
+RPUSH University:1:students MGET Students
+LRANGE University:1:students 0 -1
+LTRIM University:1:students 0 0
+L
+LPOP University:1:students 
+LRANGE University:1:students 0 -1
+HSET Person:1 name "Afonso" surname "Boto" nmec 89285
+HGET Person:1 name surname
+HMGET Person:1 name surname
+HMGET Person:1 name nmec

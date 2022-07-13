@@ -1,0 +1,42 @@
+test> db.inventory.insertOne(
+...    { item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
+... )
+{
+  acknowledged: true,
+  insertedId: ObjectId("62cd853e508d08bbc632c81c")
+}
+test> db.inventory.find({item:"canvas"})
+[
+  {
+    _id: ObjectId("62cd853e508d08bbc632c81c"),
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  }
+]
+test> db.inventory.find({qty: 100})
+[
+  {
+    _id: ObjectId("62cd853e508d08bbc632c81c"),
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  }
+]
+test> db.inventory.find({})
+[
+  {
+    _id: ObjectId("62cd853e508d08bbc632c81c"),
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  }
+]
+test> show dbs
+admin   40.00 KiB
+config  12.00 KiB
+local   40.00 KiB
+test    40.00 KiB
