@@ -1,3 +1,5 @@
+Experiências Básicas
+
 test> db.inventory.insertOne(
 ...    { item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
 ... )
@@ -40,3 +42,53 @@ admin   40.00 KiB
 config  12.00 KiB
 local   40.00 KiB
 test    40.00 KiB
+
+Estrutura básica:
+
+Database - corresponde a uma base de dados
+Collection - corresponde a um colecção de dados, sendo considerada uma tabela em SQL
+Document - corresponde a informação de um dada chave.
+Field - corresponde a um campo de um documento, análogo a uma coluna em SQL
+
+Inserir dados:
+De forma a poder-se utilizar uma base de dados usa-se o comando
+>use <db name> 
+
+Estando por sua vez dentro de uma base de dados
+Neste momento podemos criar collections usando
+>db.createCollection("<collection name>" , <options>);
+
+O mongo dispõe de uma serie de funções que permitem inserir documentos numa Collection, sendo essas db.<collection>.insertOne() e db.<collection>.insertMany()
+
+Queries:
+
+De forma a pesquisar sobre dados, usa-se a função db.<collection>.find({<query>}, {<select>})
+Aqui a query , é uma forma de selecionar que documentos vão aparecer de acordo com condições, e o select é uma projeção	de que campos devem aparecer sendo que por default aparecem todos
+
+Condições básicas.
+
+Equality			{<key>:{$eq;<value>}}
+Less Than			{<key>:{$lt:<value>}}
+Less Than Equals		{<key>:{$lte:<value>}}
+Greater Than			{<key>:{$gt:<value>}}
+Greater Than Equals		{<key>:{$gte:<value>}}
+Not Equals			{<key>:{$ne:<value>}}
+Values in an array		{<key>:{$in:[<value1>, <value2>,……<valueN>]}}
+Values not in an array		{<key>:{$nin:<value>}}
+
+
+Em alternativa pode-se usar o db.<collection>.aggregate([]), sendo que é bastante parecido com o find não que se pode fazer mas muito mais poderoso.
+Dentro das "[]" pode-se usar uma lógica de "stages" que permitem condicionar o que vai aparecer na query, estes stages são dia estilo {$<operador> : {expression}}
+
+Sendo os mais comuns o $group que funciona como o groupby do SQL, o sort que define como deve ser ordenada a query, o match, que serve de filtros e o project que define o que campos é que vão aparecer.
+
+
+Indexes: 
+De forma a criar indexes usa-se :
+> db.<collection>.createIndex({KEY:1}) -- -1 descending, 1 ascending
+> db.<collection>.createIndex({"title":1,"description":-1})
+
+Podendo ser eliminados através de:
+> db.<collection>.dropIndex({KEY:1})
+
+ 
