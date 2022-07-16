@@ -1,0 +1,113 @@
+CREATE KEYSPACE IF NOT EXISTS testing WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor':2}
+
+USE testing;
+
+//create table student
+CREATE TABLE student (
+    id text,
+    name text,
+    nmec text,
+
+    PRIMARY KEY ( id, name )
+);
+
+//insert data to table
+INSERT INTO student (id, name, nmec) VALUES ('1', 'afonso', '89285');
+INSERT INTO student (id, name, nmec) VALUES ('2', 'ricardo', '89265');
+INSERT INTO student (id, name, nmec) VALUES ('3', 'joao', '89234');
+
+//Get Data
+SELECT * from student;
+
+
+ id | name    | nmec
+----+---------+-------
+  3 |    joao | 89234
+  2 | ricardo | 89265
+  1 |  afonso | 89285
+
+
+//Get Data in JSON
+SELECT JSON * from student;
+
+ [json]
+-------------------------------------------------
+    {"id": "3", "name": "joao", "nmec": "89234"}
+ {"id": "2", "name": "ricardo", "nmec": "89265"}
+  {"id": "1", "name": "afonso", "nmec": "89285"}
+
+//get specific column
+SELECT nmec from student;
+
+ nmec
+-------
+ 89234
+ 89265
+ 89285
+
+UPDATE student set nmec='88233' where name='ricardo' and id='2'; // both primary keys have to be specified in order to update work;
+SELECT nmec from student;
+
+ nmec
+-------
+ 89234
+ 88233
+ 89285
+
+//EXPERIMENTATION WITH CLUSTER
+
+It is stated from the DataStax Documentation that
+ORDER BY clauses can select a single column only. That column has to be the second column in a compound PRIMARY KEY. This also applies to tables with more than two column components in the primary key.
+
+I altered the tables to include the department as the main primary key in order to see this working;
+
+SO I inserted the new table as following:
+
+DROP TABLE IF EXISTS student;
+CREATE TABLE student (
+    dep text,
+    name text,
+    nmec text,
+
+    PRIMARY KEY ( dep, name, nmec )
+) WITH CLUSTERING ORDER BY ( name DESC  );
+
+Then inserted the following data: 
+
+INSERT INTO student (dep, name, nmec) VALUES ('DETI', 'afonso', '89285');
+INSERT INTO student (dep, name, nmec) VALUES ('DETI', 'joao', '89265');
+INSERT INTO student (dep, name, nmec) VALUES ('DETI', 'ricardo', '89288');
+INSERT INTO student (dep, name, nmec) VALUES ('DBIO', 'joana', '89234');
+
+So when I query the students it should be ordered first by department ascending and then by name desceding:
+After I perform
+SELECT * from student;
+
+
+ dep  | name    | nmec
+------+---------+-------
+ DBIO |   joana | 89234
+ DETI | ricardo | 89288
+ DETI |    joao | 89265
+ DETI |  afonso | 89285
+
+In other hand if I do the table like this 
+DROP TABLE IF EXISTS student;
+CREATE TABLE student (
+    dep text,
+    name text,
+    nmec text,
+
+    PRIMARY KEY ( dep, name, nmec )
+) WITH CLUSTERING ORDER BY ( name ASC );
+
+When I perform the same query I get:
+
+ DBIO |   joana | 89234
+ DETI |  afonso | 89285
+ DETI |    joao | 89265
+ DETI | ricardo | 89288
+
+
+
+
