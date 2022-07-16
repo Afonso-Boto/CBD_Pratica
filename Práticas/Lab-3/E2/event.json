@@ -1,0 +1,10 @@
+{"video": "video2", "username": "pedro pereira123", "date": "2021-12-01 12:04:00.000Z", "duration": 192, "event": "stop"}
+{"video": "video2", "username": "jacinto boto123", "date": "2021-12-01 12:06:00.000Z", "duration": 650, "event": "play"}
+{"video": "video6", "username": "afonso silva123", "date": "2021-12-01 12:08:00.000Z", "duration": 847, "event": "pause"}
+{"video": "video2", "username": "ricardo silva123", "date": "2021-12-01 12:03:00.000Z", "duration": 583, "event": "pause"}
+{"video": "video9", "username": "jacinto pereira123", "date": "2021-12-01 12:01:00.000Z", "duration": 629, "event": "stop"}
+{"video": "video5", "username": "afonso cardoso123", "date": "2021-12-01 12:07:00.000Z", "duration": 120, "event": "pause"}
+{"video": "video5", "username": "ricardo cardoso123", "date": "2021-12-01 12:02:00.000Z", "duration": 344, "event": "pause"}
+{"video": "video9", "username": "ricardo cardoso123", "date": "2021-12-01 12:00:00.000Z", "duration": 308, "event": "play"}
+{"video": "video2", "username": "afonso pereira123", "date": "2021-12-01 12:05:00.000Z", "duration": 470, "event": "play"}
+{"video": "video4", "username": "luis pereira123", "date": "2021-12-01 12:09:00.000Z", "duration": 920, "event": "pause"}
