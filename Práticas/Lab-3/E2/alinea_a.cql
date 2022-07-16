@@ -65,8 +65,8 @@ CREATE TABLE rating (
     video       text,
     rating        smallint,
 
-    PRIMARY KEY (video, rating_id)
-);
+    PRIMARY KEY (video, rating, rating_id)
+)WITH CLUSTERING ORDER BY (rating DESC, rating_id ASC);
 
 // 7.
 SELECT * FROM video WHERE author='afonso';

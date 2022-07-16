@@ -21,7 +21,7 @@ def insert_ratings(rating_id, video, rating):
 
 with open("alinea_b.cql", "w") as f:
     autores = [a + " " + b for a in ["afonso", "ricardo", "jacinto", "gabriel", "luis", "pedro", "andre"] for b in ["silva", "pereira", "cardoso", "boto"]]
-    tags = ["comedia", "drama", "acão", "terror", "gameplay", "vlog", "politica"]
+    tags = ["comedia", "drama", "acão", "terror", "gameplay", "vlog", "politica", "Aveiro"]
     tipos = ["play", "pause", "stop"]
     
 
