@@ -1,0 +1,80 @@
+// NMEC: 89285
+
+#1
+MATCH (Actor:Person)-[:DIRECTED]->(film:Movie)<-[:ACTED_IN]-(Actor:Person) 
+RETURN Actor.name AS NAME, film.title as title
+
+#2
+MATCH(actor:Person)-[:ACTED_IN]->(film:Movie)  WHERE film.released > 2005 RETURN collect(actor.name) as actors, film.title as movie 
+
+#3
+MATCH (n) -- (m) WITH *, COUNT(*) as num_relations WHERE num_relations > 1 RETURN n, m, num_relations
+
+#4
+MATCH(actor:Person)-[:REVIEWED]->(movie:Movie)<-[:REVIEWED]-(actor2:Person) WHERE actor<>actor2 RETURN movie.title as title, actor, actor2
+
+#5
+MATCH(actor:Person)-[:ACTED_IN]->(:Movie)<-[:ACTED_IN]-(actor2:Person) WITH *, COUNT(*) AS together WHERE together>1 and actor < actor2 RETURN actor.name, actor2.name
+
+#6
+MATCH (actor:Person)-[:ACTED_IN]->(m:Movie {title:"Apollo 13"}) 
+WITH m, AVG(m.released - actor.born) as average_age
+RETURN average_age
+
+#7
+MATCH (actor:Person)-[:ACTED_IN]->(movie:Movie) WITH movie, movie.released - AVG( actor.born) as avg_age ORDER BY avg_age DESC LIMIT 10 RETURN movie, avg_age
+
+#8
+CALL {
+    MATCH (actor:Person)-[:ACTED_IN]->(movie:Movie)
+    WITH movie, movie.released - AVG(actor.born) as avg_age
+    ORDER BY avg_age ASC LIMIT 1
+    RETURN movie
+}
+MATCH (a:Person)-[:ACTED_IN]->(m)
+RETURN a as actor , m as movie;
+
+#9
+Match path = shortestpath((p1:Person {name: "John Cusack"})-[*]-(p2:Person {name: "Demi Moore"})) RETURN path
+
+#10
+Match path = shortestpath((p1:Person {name: "John Cusack"})-[*]-(p2:Person {name: "Demi Moore"})) RETURN length(path)
+
+#11
+Match path = shortestpath((p1:Person )-[*]-(p2:Person)) WHERE p1.name STARTS WITH 'Jim ' AND p2.name STARTS WITH 'Kevin '  RETURN length(path) as tamanho ORDER BY tamanho DESC LIMIT 1
+
+#12
+MATCH (p:Person)-[*2]-(jim:Person {name: 'Jim Cash'})
+RETURN p;
+
+#13
+CALL {
+    MATCH p = shortestpath((kevin:Person {name: 'Kevin Bacon'})-[*]-(person:Person))
+    WHERE person.name <> 'Kevin Bacon'
+    RETURN p
+}
+WITH max(length(p)) as maxDistance
+RETURN maxDistance;
+
+#14
+CALL {
+    MATCH p = shortestpath((p1:Person)-[*]-(p2:Person))
+    WHERE p1 <> p2
+    RETURN p
+}
+WITH max(length(p)) as maxDistance
+RETURN maxDistance
+
+#15
+MATCH p = shortestpath((p1:Person)-[r*]-(p2:Person))
+WHERE p1 < p2
+RETURN length(p) AS distance, count(*) as nPairs
+ORDER BY distance ASC;
+
+#16
+MATCH p = shortestPath((p1:Person)-[:ACTED_IN*0..50]-(p2:Person))
+WHERE p1 <> p2
+WITH p1, avg(length(p)) AS avgDistance
+RETURN p1.name AS person
+ORDER BY avgDistance ASC
+LIMIT 10;
